@@ -11,9 +11,9 @@ import javax.swing.JPanel;
  *
  * @author steeb
  */
-public class WeinBalkenDiagagramm extends JPanel{
+public class WeinBalkenDiagramm extends JPanel{
     
-    public WeinBalkenDiagagramm() {
+    public WeinBalkenDiagramm() {
         super();
         this.setBackground(Color.white);
         this.add(new Balken(2002, 2005));

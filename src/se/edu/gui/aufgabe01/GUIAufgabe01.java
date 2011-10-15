@@ -5,7 +5,7 @@
 package se.edu.gui.aufgabe01;
 
 import javax.swing.JFrame;
-import se.edu.gui.aufgabe01.diagramm.WeinBalkenDiagagramm;
+import se.edu.gui.aufgabe01.diagramm.WeinBalkenDiagramm;
 
 /**
  *
@@ -18,7 +18,7 @@ public class GUIAufgabe01 extends JFrame{
         this.setTitle("GUI Aufgabe 01");
         this.setBounds(100, 100, 100, 100);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(new WeinBalkenDiagagramm());
+        this.setContentPane(new WeinBalkenDiagramm());
     }
 
     /**
