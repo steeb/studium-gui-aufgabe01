@@ -4,6 +4,7 @@
  */
 package se.edu.gui.aufgabe01.diagramm;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JPanel;
 
@@ -15,8 +16,9 @@ public class WeinBalkenDiagramm extends JPanel{
     
     public WeinBalkenDiagramm() {
         super();
+        this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
-        this.add(new Balken(2002, 2005));
+        this.add(new Balken(2002, 10));
     }
    
 }

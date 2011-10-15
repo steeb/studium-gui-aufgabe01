@@ -4,7 +4,11 @@
  */
 package se.edu.gui.aufgabe01.diagramm;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import javax.swing.JPanel;
 
 /**
@@ -13,15 +17,26 @@ import javax.swing.JPanel;
  */
 public class Balken extends JPanel{
     
+    int jahrgang;
+    int lagerdauer;
+    int heightBalken;
+    
     public Balken(int jahrgang, int lagerdauer) {
         super();
+        this.jahrgang = jahrgang;
+        this.lagerdauer = lagerdauer;
+        this.heightBalken = this.getHeight() - 10;
+        this.setBackground(Color.magenta);
     }
 
     @Override
-    protected void paintComponent(Graphics grphcs) {
-        super.paintComponent(grphcs);
-        grphcs.draw3DRect(10, 101, 20, 40, true);
-        grphcs.drawLine(10, 10, this.getWidth() - 10, 10);
+    public void paintComponents(Graphics grphcs) {
+        super.paintComponents(grphcs);
+        Graphics2D grphcs2d = (Graphics2D)grphcs;
+        Dimension d = this.getSize();
+        grphcs2d.scale(d.getWidth() / this.lagerdauer,
+                d.getHeight());
+        grphcs2d.draw(new Rectangle(10, 10, 10, this.heightBalken));
     }
     
 }
