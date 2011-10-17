@@ -30,13 +30,11 @@ public class Balken extends JPanel{
     }
 
     @Override
-    public void paintComponents(Graphics grphcs) {
-        super.paintComponents(grphcs);
+    public void paintComponent(Graphics grphcs) {
+        super.paintComponent(grphcs);
         Graphics2D grphcs2d = (Graphics2D)grphcs;
-        Dimension d = this.getSize();
-        grphcs2d.scale(d.getWidth() / this.lagerdauer,
-                d.getHeight());
-        grphcs2d.draw(new Rectangle(10, 10, 10, this.heightBalken));
+        Dimension d = this.getSize(null);
+        grphcs2d.draw(new Rectangle.Double(10, 10, 100 + d.getWidth() * 0.5 , 100));
     }
     
 }
