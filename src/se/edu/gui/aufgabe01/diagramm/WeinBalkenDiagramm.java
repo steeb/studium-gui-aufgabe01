@@ -42,10 +42,11 @@ public class WeinBalkenDiagramm extends JPanel{
         balkenHoehe = this.getHeight() * 25 / 100 - 10;
         
         fensterBreite = this.getWidth() * 80 / 100;
-        balkenBreite0 = fensterBreite * 10 / 100;
-        balkenBreite1 = fensterBreite * 20 / 100;
-        balkenBreite2 = fensterBreite * 50 / 100;
-        balkenBreite3 = fensterBreite * 20 / 100;
+        balkenBreite3 = fensterBreite / this.lagerdauer;
+        balkenBreite0 = fensterBreite * 125 / 1000; // 1/8
+        balkenBreite2 = fensterBreite / 2;          // 1/2
+        balkenBreite1 = fensterBreite - balkenBreite3 - balkenBreite0 
+                - balkenBreite2;
         
         //zu früh
         grphcs2d.translate(this.getWidth() / 10, this.getHeight() / 10);
