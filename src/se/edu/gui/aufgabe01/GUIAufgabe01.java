@@ -18,7 +18,7 @@ public class GUIAufgabe01 extends JFrame{
         this.setTitle("GUI Aufgabe 01");
         this.setBounds(100, 100, 100, 100);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(new WeinBalkenDiagramm());
+        this.setContentPane(new WeinBalkenDiagramm(2001, 11));
     }
 
     /**
