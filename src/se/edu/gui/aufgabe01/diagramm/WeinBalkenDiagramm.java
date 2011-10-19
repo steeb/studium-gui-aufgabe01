@@ -33,7 +33,7 @@ public class WeinBalkenDiagramm extends JPanel{
     @Override
     protected void paintComponent(Graphics grphcs) {
         super.paintComponent(grphcs);
-        double fensterBreite;
+        int fensterBreite;
         int balkenBreite0, balkenBreite1, balkenBreite2, balkenBreite3;
         int balkenHoehe;
         Graphics2D grphcs2d = (Graphics2D)grphcs;
@@ -42,10 +42,10 @@ public class WeinBalkenDiagramm extends JPanel{
         balkenHoehe = this.getHeight() * 25 / 100 - 10;
         
         fensterBreite = this.getWidth() * 80 / 100;
-        balkenBreite0 = (int)(fensterBreite * 10 / 100);
-        balkenBreite1 = (int)(fensterBreite * 20 / 100);
-        balkenBreite2 = (int)(fensterBreite * 50 / 100);
-        balkenBreite3 = (int)(fensterBreite * 20 / 100);
+        balkenBreite0 = fensterBreite * 10 / 100;
+        balkenBreite1 = fensterBreite * 20 / 100;
+        balkenBreite2 = fensterBreite * 50 / 100;
+        balkenBreite3 = fensterBreite * 20 / 100;
         
         //zu früh
         grphcs2d.translate(this.getWidth() / 10, this.getHeight() / 10);
