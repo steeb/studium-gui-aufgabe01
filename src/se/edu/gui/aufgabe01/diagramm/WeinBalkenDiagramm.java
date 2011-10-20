@@ -67,8 +67,8 @@ public class WeinBalkenDiagramm extends JPanel{
         
         //steigert sich noch
         grphcs2d.translate(balkenBreite0, 0);
-        grphcs2d.setPaint(new GradientPaint(0, 50, Color.GRAY, 
-                                            200, 50, Color.GREEN));
+        grphcs2d.setPaint(new GradientPaint(0, 0, Color.GRAY, 
+                                            balkenBreite0, 0, Color.GREEN));
         grphcs2d.fill(new Rectangle(balkenBreite1, balkenHoehe));
         grphcs2d.setPaint(Color.BLACK);
         grphcs2d.draw(new Rectangle(balkenBreite1, balkenHoehe));
