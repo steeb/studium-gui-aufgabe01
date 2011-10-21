@@ -60,9 +60,8 @@ public class GUIAufgabe01 extends JFrame{
                     + " - " + GUIAufgabe01.MAX_LAGERDAUER + "): ");
             try {
                 GUIAufgabe01.lagerdauer = Integer.parseInt(sLagerdauer);
-                if (GUIAufgabe01.lagerdauer == 1) {
+                if (GUIAufgabe01.lagerdauer == 0) {
                     System.out.println("Das wäre Traubensaft :)");
-                    GUIAufgabe01.lagerdauer = 0;
                 }
                 else if (GUIAufgabe01.lagerdauer > GUIAufgabe01.MAX_LAGERDAUER || 
                         GUIAufgabe01.lagerdauer < GUIAufgabe01.MIN_LAGERDAUER ) {
