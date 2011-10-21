@@ -11,6 +11,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.util.Calendar;
 import javax.swing.JPanel;
 
@@ -47,8 +48,14 @@ public class WeinBalkenDiagramm extends JPanel{
         int jahr0, jahr1, jahr2, jahr3;
         int balkenHoehe;
         int schriftHoehe = 12;
+        int legendePosOben, legendePosUnten;
+        int legendeSpaltenHoehe;
+        int legendeKastenGroesse;
         Calendar cal = Calendar.getInstance();  
         Graphics2D grphcs2d = (Graphics2D)grphcs;
+        
+        AffineTransform defTransform = grphcs2d.getTransform();
+        
         grphcs2d.setStroke(new BasicStroke(1));
         
         balkenHoehe = this.getHeight() * 25 / 100 - schriftHoehe;
@@ -64,6 +71,11 @@ public class WeinBalkenDiagramm extends JPanel{
         jahr1 = this.jahrgang + (int)Math.round(this.lagerdauer / 8.0);
         jahr2 = this.jahrgang + this.lagerdauer / 2;
         jahr3 = this.jahrgang + this.lagerdauer;
+        
+        legendePosOben = this.getHeight() * 45 / 100;
+        legendePosUnten = this.getHeight() * 9 / 10;
+        legendeSpaltenHoehe = (legendePosUnten - legendePosOben) / 5;
+        legendeKastenGroesse = legendeSpaltenHoehe / 2;
         
         //zu früh
         grphcs2d.translate(this.getWidth() / 10, this.getHeight() / 10);
@@ -106,6 +118,57 @@ public class WeinBalkenDiagramm extends JPanel{
         grphcs2d.draw(new Rectangle(balkenBreite3, balkenHoehe + 2));
         grphcs2d.drawString("" + cal.get(Calendar.YEAR), 0, balkenHoehe + 1 
                 + schriftHoehe);
+        
+        //legende
+        grphcs2d.setTransform(defTransform);
+        grphcs2d.translate(this.getWidth() / 10, legendePosOben);
+        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.drawString("Legende:", 0, 0);
+        
+        //legende zu früh
+        grphcs2d.translate(0, legendeSpaltenHoehe);
+        grphcs2d.setPaint(Color.GRAY);
+        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.drawString("zu früh",
+                legendeKastenGroesse * 2, (int)(legendeKastenGroesse / 1.5));
+        
+        //legende steigert sich noch
+        grphcs2d.translate(0, legendeSpaltenHoehe);
+        grphcs2d.setPaint(new GradientPaint(0, 0, Color.GRAY, 
+                                         legendeKastenGroesse, 0, Color.GREEN));
+        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.drawString("steigert sich noch",
+                legendeKastenGroesse * 2, (int)(legendeKastenGroesse / 1.5));
+        
+        //optimater trinkzeitpunkt
+        grphcs2d.translate(0, legendeSpaltenHoehe);
+        grphcs2d.setPaint(Color.GREEN);
+        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.drawString("optimaler Trinkzeitpunkt",
+                legendeKastenGroesse * 2, (int)(legendeKastenGroesse / 1.5));
+        
+        //überlagert
+        grphcs2d.translate(0, legendeSpaltenHoehe);
+        grphcs2d.setPaint(Color.YELLOW);
+        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                legendeKastenGroesse));
+        grphcs2d.drawString("überlagert",
+                legendeKastenGroesse * 2,(int)(legendeKastenGroesse / 1.5));
     }
    
 }
