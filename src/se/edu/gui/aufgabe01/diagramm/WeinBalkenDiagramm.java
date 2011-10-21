@@ -31,6 +31,14 @@ public class WeinBalkenDiagramm extends JPanel{
         this.setBackground(Color.white);
     }
     
+    public void setJahrgang(int jahrgang) {
+        this.jahrgang = jahrgang;
+    }
+    
+    public void setLagerdauer(int lagerdauer) {
+        this.lagerdauer = lagerdauer;
+    }
+    
     @Override
     protected void paintComponent(Graphics grphcs) {
         super.paintComponent(grphcs);
