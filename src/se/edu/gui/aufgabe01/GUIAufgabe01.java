@@ -4,7 +4,9 @@
  */
 package se.edu.gui.aufgabe01;
 
-import java.io.Console;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Calendar;
 import javax.swing.JFrame;
 import se.edu.gui.aufgabe01.diagramm.WeinBalkenDiagramm;
@@ -19,7 +21,7 @@ public class GUIAufgabe01 extends JFrame{
     static int lagerdauer;
     static GUIAufgabe01 gui;
     static WeinBalkenDiagramm wbd;
-    static Console c;
+    static BufferedReader c;
     static final int MAX_JAHRGANG = Calendar.getInstance().get(Calendar.YEAR);
     static final int MIN_JAHRGANG = 1800;
     static final int MAX_LAGERDAUER = 50;
@@ -33,7 +35,7 @@ public class GUIAufgabe01 extends JFrame{
         this.setContentPane(wbd);
     }
     
-    public static void werteEingeben() {
+    public static void werteEingeben() throws IOException {
         String sJahrgang;
         String sLagerdauer;
         
@@ -41,8 +43,9 @@ public class GUIAufgabe01 extends JFrame{
         GUIAufgabe01.lagerdauer = 0;
         
         do {
-            sJahrgang = c.readLine("Jahrgang (" + GUIAufgabe01.MIN_JAHRGANG 
-                    + " - " + GUIAufgabe01.MAX_JAHRGANG + "): ");
+            System.out.printf("Jahrgang (%d - %d): ",
+                    GUIAufgabe01.MIN_JAHRGANG, GUIAufgabe01.MAX_JAHRGANG);
+            sJahrgang = c.readLine();
             try {
                 GUIAufgabe01.jahrgang = Integer.parseInt(sJahrgang);
                 if (GUIAufgabe01.jahrgang > GUIAufgabe01.MAX_JAHRGANG ||
@@ -56,8 +59,9 @@ public class GUIAufgabe01 extends JFrame{
             }
         } while (GUIAufgabe01.jahrgang == 0);
         do {
-            sLagerdauer = c.readLine("Lagerdauer (" + GUIAufgabe01.MIN_LAGERDAUER 
-                    + " - " + GUIAufgabe01.MAX_LAGERDAUER + "): ");
+            System.out.printf("Lagerdauer (%d - %d): ",
+                    GUIAufgabe01.MIN_LAGERDAUER, GUIAufgabe01.MAX_LAGERDAUER);
+            sLagerdauer = c.readLine();
             try {
                 GUIAufgabe01.lagerdauer = Integer.parseInt(sLagerdauer);
                 if (GUIAufgabe01.lagerdauer == 0) {
@@ -81,13 +85,10 @@ public class GUIAufgabe01 extends JFrame{
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         wbd = new WeinBalkenDiagramm(jahrgang, lagerdauer);
-        c = System.console();
-        if (c == null) {
-            System.err.println("No console.");
-            System.exit(1);
-        }
+        InputStreamReader isr = new InputStreamReader(System.in);
+        c = new BufferedReader(isr);
         GUIAufgabe01.werteEingeben();
         gui = new GUIAufgabe01();
         gui.setVisible(true);
