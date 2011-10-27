@@ -23,6 +23,17 @@ public class WeinBalkenDiagramm extends JPanel {
 
     int jahrgang;
     int lagerdauer;
+    
+    private static final Color COLOR_ZU_FRUEH = Color.GRAY;
+    private static final Color COLOR_OPTIMAL = Color.GREEN;
+    private static final Color COLOR_UEBERLAGERT = Color.YELLOW;
+    private static final Color COLOR_RAHMEN = Color.BLACK;
+    private static final Color COLOR_AKTUELLES_JAHR = Color.RED;
+    
+    private static final float ANTEIL_ZU_FRUEH = 8f;
+    private static final int   ANTEIL_GESAMT = 8;
+    private static final int   ANTEIL_STEIGERT = 3;
+    private static final float ANTEIL_OPTIMAL = 2f;
 
     public WeinBalkenDiagramm(int jahrgang, int lagerdauer) {
         super();
@@ -38,6 +49,7 @@ public class WeinBalkenDiagramm extends JPanel {
 
     public final void setLagerdauer(int lagerdauer) {
         this.lagerdauer = lagerdauer;
+        this.repaint();
     }
 
     @Override
@@ -62,10 +74,10 @@ public class WeinBalkenDiagramm extends JPanel {
         balkenHoehe = this.getHeight() * 25 / 100 - schriftHoehe;
         balkenBreite = fensterBreite / (this.lagerdauer + 1);
 
-        balkenBreite0 = balkenBreite * Math.round(this.lagerdauer / 8f); // 1/8
-        balkenBreite1 = balkenBreite * Math.round(this.lagerdauer * 3f / 8f);
+        balkenBreite0 = balkenBreite * Math.round(this.lagerdauer / ANTEIL_ZU_FRUEH); // 1/8
+        balkenBreite1 = balkenBreite * Math.round(this.lagerdauer * ANTEIL_STEIGERT / ANTEIL_GESAMT);
+        balkenBreite2 = balkenBreite * Math.round(this.lagerdauer / ANTEIL_OPTIMAL); // 1/2
         balkenBreite3 = balkenBreite;
-        balkenBreite2 = balkenBreite * Math.round(this.lagerdauer / 2f); // 1/2
            
         if (this.lagerdauer == 1)
         {
@@ -74,13 +86,16 @@ public class WeinBalkenDiagramm extends JPanel {
         } 
         else if (this.lagerdauer == 2)
         {
-            balkenBreite1 += balkenBreite0;
+            balkenBreite1 = balkenBreite;
+            balkenBreite2 = balkenBreite;
             balkenBreite0 = 0;
         }
+        
+//        System.out.printf("%d %d %d %d\n", balkenBreite0, balkenBreite1, balkenBreite2, balkenBreite3);
 
         jahr0 = this.jahrgang;
-        jahr1 = this.jahrgang + (int) Math.round(this.lagerdauer / 8.0);
-        jahr2 = this.jahrgang + this.lagerdauer / 2;
+        jahr1 = this.jahrgang + (int) Math.round(this.lagerdauer / ANTEIL_ZU_FRUEH);
+        jahr2 = this.jahrgang + this.lagerdauer / (int)ANTEIL_OPTIMAL;
         jahr3 = this.jahrgang + this.lagerdauer;
 
         legendePosOben = this.getHeight() * 45 / 100;
@@ -92,44 +107,45 @@ public class WeinBalkenDiagramm extends JPanel {
         grphcs2d.translate(this.getWidth() / 10, 0);
         defTransform = grphcs2d.getTransform();
         grphcs2d.translate(0, this.getHeight() / 10);
-        grphcs2d.setPaint(Color.GRAY);
+        grphcs2d.setPaint(COLOR_ZU_FRUEH);
         grphcs2d.fill(new Rectangle(balkenBreite0, balkenHoehe));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreite0, balkenHoehe));
         grphcs2d.drawString("" + jahr0, 0, balkenHoehe + schriftHoehe);
 
         //steigert sich noch
         grphcs2d.translate(balkenBreite0, 0);
-        grphcs2d.setPaint(new GradientPaint(0, 0, Color.GRAY,
-                balkenBreite1, 0, Color.GREEN));
+        grphcs2d.setPaint(new GradientPaint(0, 0, COLOR_ZU_FRUEH,
+                balkenBreite1, 0, COLOR_OPTIMAL));
         grphcs2d.fill(new Rectangle(balkenBreite1, balkenHoehe));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreite1, balkenHoehe));
         grphcs2d.drawString("" + jahr1, 0, balkenHoehe + schriftHoehe);
 
         //optimater trinkzeitpunkt
         grphcs2d.translate(balkenBreite1, 0);
-        grphcs2d.setPaint(Color.GREEN);
+        grphcs2d.setPaint(COLOR_OPTIMAL);
         grphcs2d.fill(new Rectangle(balkenBreite2, balkenHoehe));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreite2, balkenHoehe));
         grphcs2d.drawString("" + jahr2, 0, balkenHoehe + schriftHoehe);
 
         //überlagert
         grphcs2d.translate(balkenBreite2, 0);
-        grphcs2d.setPaint(Color.YELLOW);
+        grphcs2d.setPaint(COLOR_UEBERLAGERT);
         grphcs2d.fill(new Rectangle(balkenBreite3, balkenHoehe));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreite3, balkenHoehe));
         grphcs2d.drawString("" + jahr3, 0, balkenHoehe + schriftHoehe);
 
         //momentanes Jahr
-        if (cal.get(Calendar.YEAR) >= this.jahrgang) {
+        if (cal.get(Calendar.YEAR) >= this.jahrgang
+                && this.jahrgang + this.lagerdauer > cal.get(Calendar.YEAR)) {
             grphcs2d.setTransform(defTransform);
             grphcs2d.translate((cal.get(Calendar.YEAR) - this.jahrgang)
                     * balkenBreite,
                     this.getHeight() / 10 - 1);
-            grphcs2d.setPaint(Color.RED);
+            grphcs2d.setPaint(COLOR_AKTUELLES_JAHR);
             grphcs2d.draw(new Rectangle(balkenBreite, balkenHoehe + 2));
             grphcs2d.drawString("" + cal.get(Calendar.YEAR), 0, balkenHoehe + 1
                     + schriftHoehe);
@@ -138,15 +154,15 @@ public class WeinBalkenDiagramm extends JPanel {
         //legende
         grphcs2d.setTransform(defTransform);
         grphcs2d.translate(0, legendePosOben);
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.drawString("Legende:", 0, 0);
 
         //legende zu früh
         grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(Color.GRAY);
+        grphcs2d.setPaint(COLOR_ZU_FRUEH);
         grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
         grphcs2d.drawString("zu früh",
@@ -154,11 +170,11 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //legende steigert sich noch
         grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(new GradientPaint(0, 0, Color.GRAY,
-                legendeKastenGroesse, 0, Color.GREEN));
+        grphcs2d.setPaint(new GradientPaint(0, 0, COLOR_ZU_FRUEH,
+                legendeKastenGroesse, 0, COLOR_OPTIMAL));
         grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
         grphcs2d.drawString("steigert sich noch",
@@ -166,10 +182,10 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //legende optimater trinkzeitpunkt
         grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(Color.GREEN);
+        grphcs2d.setPaint(COLOR_OPTIMAL);
         grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
         grphcs2d.drawString("optimaler Trinkzeitpunkt",
@@ -177,10 +193,10 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //legende überlagert
         grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(Color.YELLOW);
+        grphcs2d.setPaint(COLOR_UEBERLAGERT);
         grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
-        grphcs2d.setPaint(Color.BLACK);
+        grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
                 legendeKastenGroesse));
         grphcs2d.drawString("überlagert",

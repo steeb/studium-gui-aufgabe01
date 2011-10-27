@@ -79,7 +79,6 @@ public class GUIAufgabe01 extends JFrame{
         } while (GUIAufgabe01.lagerdauer == 0);
         wbd.setJahrgang(GUIAufgabe01.jahrgang);
         wbd.setLagerdauer(GUIAufgabe01.lagerdauer);
-        wbd.repaint();
     }
 
     /**
