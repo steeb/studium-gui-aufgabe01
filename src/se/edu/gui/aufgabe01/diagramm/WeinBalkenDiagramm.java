@@ -31,8 +31,6 @@ public class WeinBalkenDiagramm extends JPanel {
     private static final Color COLOR_AKTUELLES_JAHR = Color.RED;
     
     private static final float ANTEIL_ZU_FRUEH = 8f;
-    private static final int   ANTEIL_GESAMT = 8;
-    private static final int   ANTEIL_STEIGERT = 3;
     private static final float ANTEIL_OPTIMAL = 2f;
 
     public WeinBalkenDiagramm(int jahrgang, int lagerdauer) {
@@ -56,8 +54,9 @@ public class WeinBalkenDiagramm extends JPanel {
     protected void paintComponent(Graphics grphcs) {
         super.paintComponent(grphcs);
         int fensterBreite;
-        int balkenBreite, balkenBreite0, balkenBreite1, balkenBreite2, balkenBreite3;
-        int jahr0, jahr1, jahr2, jahr3;
+        int balkenBreite, balkenBreiteZuFrueh, balkenBreiteSteigertSich, 
+                balkenBreiteOptimal, balkenBreiteUeberlagert;
+        int jahrZuFrueh, jahrSteigertSich, jahrOptimal, jahrUeberlagert;
         int balkenHoehe;
         int schriftHoehe = 12;
         int legendePosOben, legendePosUnten;
@@ -74,29 +73,31 @@ public class WeinBalkenDiagramm extends JPanel {
         balkenHoehe = this.getHeight() * 25 / 100 - schriftHoehe;
         balkenBreite = fensterBreite / (this.lagerdauer + 1);
 
-        balkenBreite0 = balkenBreite * Math.round(this.lagerdauer / ANTEIL_ZU_FRUEH); // 1/8
-        balkenBreite1 = balkenBreite * Math.round(this.lagerdauer * ANTEIL_STEIGERT / ANTEIL_GESAMT);
-        balkenBreite2 = balkenBreite * Math.round(this.lagerdauer / ANTEIL_OPTIMAL); // 1/2
-        balkenBreite3 = balkenBreite;
+        balkenBreiteZuFrueh      = balkenBreite * 
+                Math.round(this.lagerdauer / ANTEIL_ZU_FRUEH);
+        balkenBreiteOptimal      = balkenBreite * 
+                Math.round(this.lagerdauer / ANTEIL_OPTIMAL);
+        balkenBreiteUeberlagert  = balkenBreite;
+        balkenBreiteSteigertSich = balkenBreite * 
+                this.lagerdauer - (balkenBreiteZuFrueh + balkenBreiteOptimal);
            
         if (this.lagerdauer == 1)
         {
-            balkenBreite0 = balkenBreite1 = 0;
-            balkenBreite2 = balkenBreite3;
+            balkenBreiteZuFrueh = balkenBreiteSteigertSich = 0;
+            balkenBreiteOptimal = balkenBreiteUeberlagert;
         } 
         else if (this.lagerdauer == 2)
         {
-            balkenBreite1 = balkenBreite;
-            balkenBreite2 = balkenBreite;
-            balkenBreite0 = 0;
+            balkenBreiteSteigertSich = balkenBreite;
+            balkenBreiteOptimal = balkenBreite;
+            balkenBreiteZuFrueh = 0;
         }
-        
-//        System.out.printf("%d %d %d %d\n", balkenBreite0, balkenBreite1, balkenBreite2, balkenBreite3);
 
-        jahr0 = this.jahrgang;
-        jahr1 = this.jahrgang + (int) Math.round(this.lagerdauer / ANTEIL_ZU_FRUEH);
-        jahr2 = this.jahrgang + this.lagerdauer / (int)ANTEIL_OPTIMAL;
-        jahr3 = this.jahrgang + this.lagerdauer;
+        jahrZuFrueh = this.jahrgang;
+        jahrSteigertSich = this.jahrgang + 
+                (int) Math.round(this.lagerdauer / ANTEIL_ZU_FRUEH);
+        jahrOptimal = this.jahrgang + this.lagerdauer / (int)ANTEIL_OPTIMAL;
+        jahrUeberlagert = this.jahrgang + this.lagerdauer;
 
         legendePosOben = this.getHeight() * 45 / 100;
         legendePosUnten = this.getHeight() * 9 / 10;
@@ -108,39 +109,39 @@ public class WeinBalkenDiagramm extends JPanel {
         defTransform = grphcs2d.getTransform();
         grphcs2d.translate(0, this.getHeight() / 10);
         grphcs2d.setPaint(COLOR_ZU_FRUEH);
-        grphcs2d.fill(new Rectangle(balkenBreite0, balkenHoehe));
+        grphcs2d.fill(new Rectangle(balkenBreiteZuFrueh, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(balkenBreite0, balkenHoehe));
-        grphcs2d.drawString("" + jahr0, 0, balkenHoehe + schriftHoehe);
+        grphcs2d.draw(new Rectangle(balkenBreiteZuFrueh, balkenHoehe));
+        grphcs2d.drawString("" + jahrZuFrueh, 0, balkenHoehe + schriftHoehe);
 
         //steigert sich noch
-        grphcs2d.translate(balkenBreite0, 0);
+        grphcs2d.translate(balkenBreiteZuFrueh, 0);
         grphcs2d.setPaint(new GradientPaint(0, 0, COLOR_ZU_FRUEH,
-                balkenBreite1, 0, COLOR_OPTIMAL));
-        grphcs2d.fill(new Rectangle(balkenBreite1, balkenHoehe));
+                balkenBreiteSteigertSich, 0, COLOR_OPTIMAL));
+        grphcs2d.fill(new Rectangle(balkenBreiteSteigertSich, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(balkenBreite1, balkenHoehe));
-        grphcs2d.drawString("" + jahr1, 0, balkenHoehe + schriftHoehe);
+        grphcs2d.draw(new Rectangle(balkenBreiteSteigertSich, balkenHoehe));
+        grphcs2d.drawString("" + jahrSteigertSich, 0, balkenHoehe + schriftHoehe);
 
         //optimater trinkzeitpunkt
-        grphcs2d.translate(balkenBreite1, 0);
+        grphcs2d.translate(balkenBreiteSteigertSich, 0);
         grphcs2d.setPaint(COLOR_OPTIMAL);
-        grphcs2d.fill(new Rectangle(balkenBreite2, balkenHoehe));
+        grphcs2d.fill(new Rectangle(balkenBreiteOptimal, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(balkenBreite2, balkenHoehe));
-        grphcs2d.drawString("" + jahr2, 0, balkenHoehe + schriftHoehe);
+        grphcs2d.draw(new Rectangle(balkenBreiteOptimal, balkenHoehe));
+        grphcs2d.drawString("" + jahrOptimal, 0, balkenHoehe + schriftHoehe);
 
         //überlagert
-        grphcs2d.translate(balkenBreite2, 0);
+        grphcs2d.translate(balkenBreiteOptimal, 0);
         grphcs2d.setPaint(COLOR_UEBERLAGERT);
-        grphcs2d.fill(new Rectangle(balkenBreite3, balkenHoehe));
+        grphcs2d.fill(new Rectangle(balkenBreiteUeberlagert, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(balkenBreite3, balkenHoehe));
-        grphcs2d.drawString("" + jahr3, 0, balkenHoehe + schriftHoehe);
+        grphcs2d.draw(new Rectangle(balkenBreiteUeberlagert, balkenHoehe));
+        grphcs2d.drawString("" + jahrUeberlagert, 0, balkenHoehe + schriftHoehe);
 
         //momentanes Jahr
         if (cal.get(Calendar.YEAR) >= this.jahrgang
-                && this.jahrgang + this.lagerdauer > cal.get(Calendar.YEAR)) {
+                && this.jahrgang + this.lagerdauer + 1 > cal.get(Calendar.YEAR)) {
             grphcs2d.setTransform(defTransform);
             grphcs2d.translate((cal.get(Calendar.YEAR) - this.jahrgang)
                     * balkenBreite,
