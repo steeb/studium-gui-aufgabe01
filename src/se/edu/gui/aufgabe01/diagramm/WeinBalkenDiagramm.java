@@ -10,6 +10,8 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -48,6 +50,8 @@ public class WeinBalkenDiagramm extends JPanel {
             balkenBreiteOptimal, balkenBreiteUeberlagert;
     int legendePosOben, legendePosUnten;
     int jahrZuFrueh, jahrSteigertSich, jahrOptimal, jahrUeberlagert;
+    boolean zeigeLegende = true;
+    boolean shiftPressed = false;
     Color colorZuFrueh = COLOR_ZU_FRUEH;
     Color colorVerlaufZuFrueh = COLOR_ZU_FRUEH;
     Color colorVerlaufOptimal = COLOR_OPTIMAL;
@@ -58,6 +62,7 @@ public class WeinBalkenDiagramm extends JPanel {
         super();
         this.addMouseMotionListener(new BalkenHighlighten());
         this.addMouseListener(new InfosAussgeben());
+        this.addKeyListener(new ToggelLegende());
         this.setJahrgang(jahrgang);
         this.setLagerdauer(lagerdauer);
         this.setBackground(Color.white);
@@ -159,8 +164,8 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //momentanes Jahr
         if (cal.get(Calendar.YEAR) >= this.jahrgang
-                && this.jahrgang + this.lagerdauer + 1 
-                    > cal.get(Calendar.YEAR)) {
+                && this.jahrgang + this.lagerdauer + 1
+                > cal.get(Calendar.YEAR)) {
             grphcs2d.setTransform(defTransform);
             grphcs2d.translate((cal.get(Calendar.YEAR) - this.jahrgang)
                     * balkenBreite,
@@ -171,56 +176,62 @@ public class WeinBalkenDiagramm extends JPanel {
                     + schriftHoehe);
         }
 
-        //legende
-        grphcs2d.setTransform(defTransform);
-        grphcs2d.translate(0, legendePosOben);
-        grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.drawString("Legende:", 0, 0);
+        if (zeigeLegende) {
+            //legende
+            grphcs2d.setTransform(defTransform);
+            grphcs2d.translate(0, legendePosOben);
+            grphcs2d.setPaint(COLOR_RAHMEN);
+            grphcs2d.drawString("Legende:", 0, 0);
 
-        //legende zu früh
-        grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(COLOR_ZU_FRUEH);
-        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.drawString("zu früh",
-                legendeKastenGroesse * 2, (int) (legendeKastenGroesse / 1.5));
+            //legende zu früh
+            grphcs2d.translate(0, legendeSpaltenHoehe);
+            grphcs2d.setPaint(COLOR_ZU_FRUEH);
+            grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.setPaint(COLOR_RAHMEN);
+            grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.drawString("zu früh",
+                    legendeKastenGroesse * 2,
+                    (int) (legendeKastenGroesse / 1.5));
 
-        //legende steigert sich noch
-        grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(new GradientPaint(0, 0, COLOR_ZU_FRUEH,
-                legendeKastenGroesse, 0, COLOR_OPTIMAL));
-        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.drawString("steigert sich noch",
-                legendeKastenGroesse * 2, (int) (legendeKastenGroesse / 1.5));
+            //legende steigert sich noch
+            grphcs2d.translate(0, legendeSpaltenHoehe);
+            grphcs2d.setPaint(new GradientPaint(0, 0, COLOR_ZU_FRUEH,
+                    legendeKastenGroesse, 0, COLOR_OPTIMAL));
+            grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.setPaint(COLOR_RAHMEN);
+            grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.drawString("steigert sich noch",
+                    legendeKastenGroesse * 2,
+                    (int) (legendeKastenGroesse / 1.5));
 
-        //legende optimater trinkzeitpunkt
-        grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(COLOR_OPTIMAL);
-        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.drawString("optimaler Trinkzeitpunkt",
-                legendeKastenGroesse * 2, (int) (legendeKastenGroesse / 1.5));
+            //legende optimater trinkzeitpunkt
+            grphcs2d.translate(0, legendeSpaltenHoehe);
+            grphcs2d.setPaint(COLOR_OPTIMAL);
+            grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.setPaint(COLOR_RAHMEN);
+            grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.drawString("optimaler Trinkzeitpunkt",
+                    legendeKastenGroesse * 2,
+                    (int) (legendeKastenGroesse / 1.5));
 
-        //legende überlagert
-        grphcs2d.translate(0, legendeSpaltenHoehe);
-        grphcs2d.setPaint(COLOR_UEBERLAGERT);
-        grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.setPaint(COLOR_RAHMEN);
-        grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
-                legendeKastenGroesse));
-        grphcs2d.drawString("überlagert",
-                legendeKastenGroesse * 2, (int) (legendeKastenGroesse / 1.5));
+            //legende überlagert
+            grphcs2d.translate(0, legendeSpaltenHoehe);
+            grphcs2d.setPaint(COLOR_UEBERLAGERT);
+            grphcs2d.fill(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.setPaint(COLOR_RAHMEN);
+            grphcs2d.draw(new Rectangle(0, 0, legendeKastenGroesse,
+                    legendeKastenGroesse));
+            grphcs2d.drawString("überlagert",
+                    legendeKastenGroesse * 2,
+                    (int) (legendeKastenGroesse / 1.5));
+        }
     }
 
     class BalkenHighlighten extends MouseMotionAdapter {
@@ -235,10 +246,10 @@ public class WeinBalkenDiagramm extends JPanel {
             colorUeberlagert = COLOR_UEBERLAGERT;
             mouseIn = Elemente.ausserhalb;
             //Horizontalen bereich einschränken
-            if (e.getX() > getWidth() / 10 
+            if (e.getX() > getWidth() / 10
                     && e.getX() < getWidth() - getWidth() / 10) {
                 //vertikal balken
-                if (e.getY() > getHeight() / 10 
+                if (e.getY() > getHeight() / 10
                         && e.getY() < getHeight() / 10 + balkenHoehe) {
                     colorZuFrueh = COLOR_ZU_FRUEH;
                     colorVerlaufZuFrueh = COLOR_ZU_FRUEH;
@@ -269,7 +280,7 @@ public class WeinBalkenDiagramm extends JPanel {
                         colorUeberlagert = COLOR_UEBERLAGERT.darker();
                     }
                     //vertikal legende
-                } else if (e.getY() > legendePosOben 
+                } else if (e.getY() > legendePosOben
                         && e.getY() < legendePosUnten) {
                     mouseIn = Elemente.legende;
                 }
@@ -288,24 +299,50 @@ public class WeinBalkenDiagramm extends JPanel {
             switch (mouseIn) {
                 case zuFrueh:
                     System.out.printf("In den Jahren %d - %d ist es für den "
-                            + "Wein noch zu früh.\n", jahrZuFrueh, 
+                            + "Wein noch zu früh.\n", jahrZuFrueh,
                             jahrSteigertSich - 1);
                     break;
                 case steigertSich:
                     System.out.printf("In den Jahren %d - %d steigert sich der "
-                            + "Geschmack des Weins noch.\n", jahrSteigertSich, 
+                            + "Geschmack des Weins noch.\n", jahrSteigertSich,
                             jahrOptimal - 1);
                     break;
                 case optimal:
                     System.out.printf("In den Jahren %d – %d hat der Wein sein "
-                            + "geschmackliches Optimum.\n", jahrOptimal, 
+                            + "geschmackliches Optimum.\n", jahrOptimal,
                             jahrUeberlagert - 1);
                     break;
                 case ueberlagert:
                     System.out.printf("Ab dem Jahre %d ist der Wein überlagert."
                             + "\n", jahrUeberlagert);
                     break;
+                    
+                    
+                case legende:
+                    if (shiftPressed) {
+                        zeigeLegende = !zeigeLegende;
+                        repaint();
+                    }
+                    break;
             }
         }
+    }
+    
+    class ToggelLegende extends KeyAdapter {
+        
+        @Override
+        public void keyPressed(KeyEvent e) {
+            super.keyPressed(e);
+            if(e.getKeyCode() == KeyEvent.VK_SHIFT)
+                shiftPressed = true;
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            super.keyReleased(e);
+            if(e.getKeyCode() == KeyEvent.VK_SHIFT)
+                shiftPressed = false;
+        }
+
     }
 }
