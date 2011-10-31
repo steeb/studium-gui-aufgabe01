@@ -272,8 +272,23 @@ public class WeinBalkenDiagramm extends JPanel {
                    mouseIn = Elemente.legende;
                }
            }
-           if (mouseInAlt != mouseIn)
+           if (mouseInAlt != mouseIn) {
                repaint();
+               switch (mouseIn) {
+                   case zuFrueh:
+                       System.out.printf("zu frueh\n");
+                       break;
+                   case steigertSich:
+                       System.out.printf("steigert sich noch\n");
+                       break;
+                   case optimal:
+                       System.out.printf("optimal\n");
+                       break;
+                   case ueberlagert:
+                       System.out.printf("ueberlagert\n");
+                       break;
+               }
+           }
         }
         
         
