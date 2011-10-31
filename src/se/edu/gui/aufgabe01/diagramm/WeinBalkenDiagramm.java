@@ -5,12 +5,13 @@
 package se.edu.gui.aufgabe01.diagramm;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.AffineTransform;
 import java.util.Calendar;
 import javax.swing.JPanel;
@@ -20,9 +21,6 @@ import javax.swing.JPanel;
  * @author steeb
  */
 public class WeinBalkenDiagramm extends JPanel {
-
-    int jahrgang;
-    int lagerdauer;
     
     private static final Color COLOR_ZU_FRUEH = Color.GRAY;
     private static final Color COLOR_OPTIMAL = Color.GREEN;
@@ -33,12 +31,36 @@ public class WeinBalkenDiagramm extends JPanel {
     private static final float ANTEIL_ZU_FRUEH = 8f;
     private static final float ANTEIL_OPTIMAL = 2f;
 
+    enum Elemente {
+        zuFrueh,
+        steigertSich,
+        optimal,
+        ueberlagert,
+        legende,
+        ausserhalb
+    }
+    Elemente mouseIn = Elemente.ausserhalb;
+    
+    int jahrgang;
+    int lagerdauer;
+    int balkenHoehe;
+    int balkenBreite, balkenBreiteZuFrueh, balkenBreiteSteigertSich, 
+            balkenBreiteOptimal, balkenBreiteUeberlagert;
+    int legendePosOben, legendePosUnten;
+    Color colorZuFrueh = COLOR_ZU_FRUEH;
+    Color colorVerlaufZuFrueh = COLOR_ZU_FRUEH;
+    Color colorVerlaufOptimal = COLOR_OPTIMAL;
+    Color colorOptimal = COLOR_OPTIMAL;
+    Color colorUeberlagert = COLOR_UEBERLAGERT;
+
     public WeinBalkenDiagramm(int jahrgang, int lagerdauer) {
         super();
+        this.addMouseMotionListener(new BalkenHighlighten());
         this.setJahrgang(jahrgang);
         this.setLagerdauer(lagerdauer);
-        this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
+        this.setFocusable(true);
+        
     }
 
     public final void setJahrgang(int jahrgang) {
@@ -54,12 +76,8 @@ public class WeinBalkenDiagramm extends JPanel {
     protected void paintComponent(Graphics grphcs) {
         super.paintComponent(grphcs);
         int fensterBreite;
-        int balkenBreite, balkenBreiteZuFrueh, balkenBreiteSteigertSich, 
-                balkenBreiteOptimal, balkenBreiteUeberlagert;
         int jahrZuFrueh, jahrSteigertSich, jahrOptimal, jahrUeberlagert;
-        int balkenHoehe;
         int schriftHoehe = 12;
-        int legendePosOben, legendePosUnten;
         int legendeSpaltenHoehe;
         int legendeKastenGroesse;
         AffineTransform defTransform;
@@ -108,7 +126,7 @@ public class WeinBalkenDiagramm extends JPanel {
         grphcs2d.translate(this.getWidth() / 10, 0);
         defTransform = grphcs2d.getTransform();
         grphcs2d.translate(0, this.getHeight() / 10);
-        grphcs2d.setPaint(COLOR_ZU_FRUEH);
+        grphcs2d.setPaint(colorZuFrueh);
         grphcs2d.fill(new Rectangle(balkenBreiteZuFrueh, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreiteZuFrueh, balkenHoehe));
@@ -116,8 +134,8 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //steigert sich noch
         grphcs2d.translate(balkenBreiteZuFrueh, 0);
-        grphcs2d.setPaint(new GradientPaint(0, 0, COLOR_ZU_FRUEH,
-                balkenBreiteSteigertSich, 0, COLOR_OPTIMAL));
+        grphcs2d.setPaint(new GradientPaint(0, 0, colorVerlaufZuFrueh,
+                balkenBreiteSteigertSich, 0, colorVerlaufOptimal));
         grphcs2d.fill(new Rectangle(balkenBreiteSteigertSich, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreiteSteigertSich, balkenHoehe));
@@ -125,7 +143,7 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //optimater trinkzeitpunkt
         grphcs2d.translate(balkenBreiteSteigertSich, 0);
-        grphcs2d.setPaint(COLOR_OPTIMAL);
+        grphcs2d.setPaint(colorOptimal);
         grphcs2d.fill(new Rectangle(balkenBreiteOptimal, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreiteOptimal, balkenHoehe));
@@ -133,7 +151,7 @@ public class WeinBalkenDiagramm extends JPanel {
 
         //überlagert
         grphcs2d.translate(balkenBreiteOptimal, 0);
-        grphcs2d.setPaint(COLOR_UEBERLAGERT);
+        grphcs2d.setPaint(colorUeberlagert);
         grphcs2d.fill(new Rectangle(balkenBreiteUeberlagert, balkenHoehe));
         grphcs2d.setPaint(COLOR_RAHMEN);
         grphcs2d.draw(new Rectangle(balkenBreiteUeberlagert, balkenHoehe));
@@ -203,4 +221,62 @@ public class WeinBalkenDiagramm extends JPanel {
         grphcs2d.drawString("überlagert",
                 legendeKastenGroesse * 2, (int) (legendeKastenGroesse / 1.5));
     }
+    
+    class BalkenHighlighten extends MouseMotionAdapter {  
+        
+        boolean isMouseInZuFrueh, isMouseInSteigertSich, isMouseInOptimal,
+                isMouseInUeberlagert = false;
+
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            Elemente mouseInAlt = mouseIn;
+            colorZuFrueh = COLOR_ZU_FRUEH;
+            colorVerlaufZuFrueh = COLOR_ZU_FRUEH;
+            colorVerlaufOptimal = COLOR_OPTIMAL;
+            colorOptimal = COLOR_OPTIMAL;
+            colorUeberlagert = COLOR_UEBERLAGERT;
+            mouseIn = Elemente.ausserhalb;
+            //Horizontalen bereich einschränken
+           if (e.getX() > getWidth() / 10 && e.getX() < getWidth() - getWidth() / 10) {
+               //vertikal balken
+               if(e.getY() > getHeight() / 10 && e.getY() < getHeight() / 10 + balkenHoehe) {
+                   colorZuFrueh = COLOR_ZU_FRUEH;
+                   colorVerlaufZuFrueh = COLOR_ZU_FRUEH;
+                   colorVerlaufOptimal = COLOR_OPTIMAL;
+                   colorOptimal = COLOR_OPTIMAL;
+                   colorUeberlagert = COLOR_UEBERLAGERT;
+                   //zufrüh
+                   if(e.getX() < getWidth() / 10 + balkenBreiteZuFrueh) {
+                       mouseIn = Elemente.zuFrueh;
+                       colorZuFrueh = COLOR_ZU_FRUEH.darker();
+                       
+                   //steigert sich noch
+                   } else if(e.getX() < getWidth() / 10 + balkenBreiteZuFrueh + balkenBreiteSteigertSich) {
+                       mouseIn = Elemente.steigertSich;
+                       colorVerlaufZuFrueh = COLOR_ZU_FRUEH.darker();
+                       colorVerlaufOptimal = COLOR_OPTIMAL.darker();
+                       
+                   //optimal
+                   } else if(e.getX() < getWidth() / 10 + balkenBreiteZuFrueh + balkenBreiteSteigertSich + balkenBreiteOptimal) {
+                       mouseIn = Elemente.optimal;
+                       colorOptimal = COLOR_OPTIMAL.darker();
+
+                   //überlagert
+                   } else {
+                       mouseIn = Elemente.ueberlagert;
+                       colorUeberlagert = COLOR_UEBERLAGERT.darker();
+                   }
+               //vertikal legende
+               } else if(e.getY() > legendePosOben && e.getY() < legendePosUnten) {
+                   mouseIn = Elemente.legende;
+               }
+           }
+           if (mouseInAlt != mouseIn)
+               repaint();
+        }
+        
+        
+    }
+    
 }
