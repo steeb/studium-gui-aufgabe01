@@ -10,8 +10,6 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -34,12 +32,10 @@ public class WeinBalkenDiagramm extends JPanel {
     private static final float ANTEIL_OPTIMAL = 2f;
 
     enum Elemente {
-
         zuFrueh,
         steigertSich,
         optimal,
         ueberlagert,
-        legende,
         ausserhalb
     }
     Elemente mouseIn = Elemente.ausserhalb;
@@ -51,7 +47,6 @@ public class WeinBalkenDiagramm extends JPanel {
     int legendePosOben, legendePosUnten;
     int jahrZuFrueh, jahrSteigertSich, jahrOptimal, jahrUeberlagert;
     boolean zeigeLegende = true;
-    boolean shiftPressed = false;
     Color colorZuFrueh = COLOR_ZU_FRUEH;
     Color colorVerlaufZuFrueh = COLOR_ZU_FRUEH;
     Color colorVerlaufOptimal = COLOR_OPTIMAL;
@@ -62,7 +57,6 @@ public class WeinBalkenDiagramm extends JPanel {
         super();
         this.addMouseMotionListener(new BalkenHighlighten());
         this.addMouseListener(new InfosAussgeben());
-        this.addKeyListener(new ToggelLegende());
         this.setJahrgang(jahrgang);
         this.setLagerdauer(lagerdauer);
         this.setBackground(Color.white);
@@ -282,7 +276,6 @@ public class WeinBalkenDiagramm extends JPanel {
                     //vertikal legende
                 } else if (e.getY() > legendePosOben
                         && e.getY() < legendePosUnten) {
-                    mouseIn = Elemente.legende;
                 }
             }
             if (mouseInAlt != mouseIn) {
@@ -318,31 +311,18 @@ public class WeinBalkenDiagramm extends JPanel {
                     break;
                     
                     
-                case legende:
-                    if (shiftPressed) {
-                        zeigeLegende = !zeigeLegende;
+                case ausserhalb:
+                    if (me.isShiftDown()) {
+                        if(javax.swing.SwingUtilities.isLeftMouseButton(me)) {
+                            zeigeLegende = true;
+                        } else if (javax.swing.SwingUtilities.isRightMouseButton(me)) {
+                            zeigeLegende = false;
+                        }
                         repaint();
                     }
                     break;
             }
         }
-    }
-    
-    class ToggelLegende extends KeyAdapter {
-        
-        @Override
-        public void keyPressed(KeyEvent e) {
-            super.keyPressed(e);
-            if(e.getKeyCode() == KeyEvent.VK_SHIFT)
-                shiftPressed = true;
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            super.keyReleased(e);
-            if(e.getKeyCode() == KeyEvent.VK_SHIFT)
-                shiftPressed = false;
-        }
-
+  
     }
 }
