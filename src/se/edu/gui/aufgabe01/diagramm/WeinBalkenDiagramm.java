@@ -289,6 +289,7 @@ public class WeinBalkenDiagramm extends JPanel {
         @Override
         public void mouseClicked(MouseEvent me) {
             super.mouseClicked(me);
+            boolean zeigeLegendeAlt = zeigeLegende;
             switch (mouseIn) {
                 case zuFrueh:
                     System.out.printf("In den Jahren %d - %d ist es für den "
@@ -318,7 +319,8 @@ public class WeinBalkenDiagramm extends JPanel {
                         } else if (javax.swing.SwingUtilities.isRightMouseButton(me)) {
                             zeigeLegende = false;
                         }
-                        repaint();
+                        if (zeigeLegendeAlt != zeigeLegende)
+                            repaint();
                     }
                     break;
             }
