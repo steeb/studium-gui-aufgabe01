@@ -47,7 +47,7 @@
         <Component class="javax.swing.JSpinner" name="lagerdauerEinsteller">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.SpinnerNumberModel(((WeinBalkenDiagrammOhneLegende)this.diagramm).getLagerdauer(), 1, 50, 1)" type="code"/>
+              <Connection code="new javax.swing.SpinnerNumberModel(((WeinBalkenDiagrammOhneLegende)this.diagramm).getLagerdauer(), null, null, 1)" type="code"/>
             </Property>
             <Property name="editor" type="javax.swing.JComponent" editor="org.netbeans.modules.form.editors.SpinnerEditorEditor">
               <SpinnerEditor format="#,##0.###" type="3"/>
@@ -58,7 +58,7 @@
             <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="spinnerGetFocus"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((NumberFormatter)((NumberEditor)this.lagerdauerEinsteller.getEditor()).getTextField().getFormatter()).setAllowsInvalid(false);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="//((NumberFormatter)((NumberEditor)this.lagerdauerEinsteller.getEditor()).getTextField().getFormatter()).setAllowsInvalid(false);"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -86,6 +86,7 @@
             </Property>
           </Properties>
           <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="diagrammMouseClicked"/>
             <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="elementGetFocus"/>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="elementLostFocus"/>
           </Events>
@@ -101,7 +102,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="143" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="167" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -113,6 +114,7 @@
             </Property>
           </Properties>
           <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="legendeMouseClicked"/>
             <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="elementGetFocus"/>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="elementLostFocus"/>
           </Events>
@@ -128,7 +130,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="191" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="167" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>

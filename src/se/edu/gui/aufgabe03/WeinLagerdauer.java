@@ -87,9 +87,9 @@ public class WeinLagerdauer extends javax.swing.JFrame {
         lagerdauerEinstellerLabel.setText("Lagerdauer:");
         lagerdauerEinstellerContainer.add(lagerdauerEinstellerLabel);
 
-        lagerdauerEinsteller.setModel(new javax.swing.SpinnerNumberModel(((WeinBalkenDiagrammOhneLegende)this.diagramm).getLagerdauer(), 1, 50, 1));
+        lagerdauerEinsteller.setModel(new javax.swing.SpinnerNumberModel(((WeinBalkenDiagrammOhneLegende)this.diagramm).getLagerdauer(), null, null, 1));
         lagerdauerEinsteller.setEditor(new javax.swing.JSpinner.NumberEditor(lagerdauerEinsteller, "#,##0.###"));
-        ((NumberFormatter)((NumberEditor)this.lagerdauerEinsteller.getEditor()).getTextField().getFormatter()).setAllowsInvalid(false);
+        //((NumberFormatter)((NumberEditor)this.lagerdauerEinsteller.getEditor()).getTextField().getFormatter()).setAllowsInvalid(false);
         lagerdauerEinsteller.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 aenderLagerdauerViaSpinner(evt);
@@ -108,6 +108,11 @@ public class WeinLagerdauer extends javax.swing.JFrame {
 
         diagramm.setBackground(new java.awt.Color(204, 204, 204));
         diagramm.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        diagramm.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                diagrammMouseClicked(evt);
+            }
+        });
         diagramm.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 elementGetFocus(evt);
@@ -125,12 +130,17 @@ public class WeinLagerdauer extends javax.swing.JFrame {
         );
         diagrammLayout.setVerticalGroup(
             diagrammLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 143, Short.MAX_VALUE)
+            .addGap(0, 167, Short.MAX_VALUE)
         );
 
         diagrammContainer.add(diagramm);
 
         legende.setBackground(new java.awt.Color(204, 204, 204));
+        legende.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                legendeMouseClicked(evt);
+            }
+        });
         legende.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 elementGetFocus(evt);
@@ -148,7 +158,7 @@ public class WeinLagerdauer extends javax.swing.JFrame {
         );
         legendeLayout.setVerticalGroup(
             legendeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 191, Short.MAX_VALUE)
+            .addGap(0, 167, Short.MAX_VALUE)
         );
 
         diagrammContainer.add(legende);
@@ -171,8 +181,24 @@ public class WeinLagerdauer extends javax.swing.JFrame {
     }//GEN-LAST:event_spinnerGetFocus
 
     private void aenderLagerdauerViaSpinner(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_aenderLagerdauerViaSpinner
+        int eingabe = Integer.parseInt(this.lagerdauerEinsteller.getValue().toString());
+        if (eingabe > 50) {
+            eingabe = 50;
+            this.lagerdauerEinsteller.setValue(new Integer(eingabe));
+        } else if (eingabe < 1) {
+            eingabe = 1;
+            this.lagerdauerEinsteller.setValue(new Integer(eingabe));
+        }
         ((WeinBalkenDiagrammOhneLegende)this.diagramm).setLagerdauer(Integer.parseInt(this.lagerdauerEinsteller.getValue().toString()));
     }//GEN-LAST:event_aenderLagerdauerViaSpinner
+
+    private void diagrammMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_diagrammMouseClicked
+        diagramm.requestFocus();
+    }//GEN-LAST:event_diagrammMouseClicked
+
+    private void legendeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_legendeMouseClicked
+        legende.requestFocus();
+    }//GEN-LAST:event_legendeMouseClicked
 
     /**
      * @param args the command line arguments
